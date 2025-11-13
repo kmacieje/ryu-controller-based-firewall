@@ -49,7 +49,7 @@ class NetworkTopo(Topo):
         self.addLink(hosts['h6'], leaves['l4']) 
 		
 		
-topos = {'SpineLeafTopo' : (lambda : SpineLeafTopo())}
+topos = {'SpineLeafTopo' : (lambda : NetworkTopo())}
 		
 		
 		
