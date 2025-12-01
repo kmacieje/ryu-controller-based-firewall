@@ -4,24 +4,25 @@ from mininet.cli import CLI
 from mininet.link import TCLink
 from mininet.log import setLogLevel
 from mininet.node import OVSKernelSwitch, RemoteController
+import time
+import random
+import os
 
 class NetworkTopo(Topo):
 
 	def build(self, **_opts):
-                
-        spines = {
+		spines = {
             's5': self.addSwitch('spine5'),
             's6': self.addSwitch('spine6')
         }
-        
-        leaves = {
+		
+		leaves = {
             'l1': self.addSwitch('leaf1'),
             'l2': self.addSwitch('leaf2'),
             'l3': self.addSwitch('leaf3'),
             'l4': self.addSwitch('leaf4')
         }
-        
-        hosts = {
+		hosts = {
             'h1': self.addHost('pc1'),
             'h2': self.addHost('pc2'),
             'h3': self.addHost('pc3'),
@@ -37,19 +38,81 @@ class NetworkTopo(Topo):
 				self.addLink(spines[s], leaves[l])
 				
 		# host-leaf connections 
-		
-        self.addLink(hosts['h1'], leaves['l1']) 
-        self.addLink(hosts['h2'], leaves['l1'])
-        
-        self.addLink(hosts['h3'], leaves['l2']) 
-        
-        self.addLink(hosts['h4'], leaves['l3']) 
-        self.addLink(hosts['h5'], leaves['l3'])
-        
-        self.addLink(hosts['h6'], leaves['l4']) 
-		
-		
-topos = {'SpineLeafTopo' : (lambda : NetworkTopo())}
-		
-		
+		self.addLink(hosts['h1'], leaves['l1']) 
+		self.addLink(hosts['h2'], leaves['l1'])
+
+		self.addLink(hosts['h3'], leaves['l2']) 
+
+		self.addLink(hosts['h4'], leaves['l3']) 
+		self.addLink(hosts['h5'], leaves['l3'])
+
+		self.addLink(hosts['h6'], leaves['l4']) 
+
+#topos = {'SpineLeafTopo' : (lambda : NetworkTopo())}
+
+def run():
+    topo = NetworkTopo()
+    
+    net = Mininet(
+        topo = topo,
+        controller = lambda name: RemoteController(
+            name,
+            ip = '127.0.0.1',
+            port = 6633
+        ),
+        switch = OVSKernelSwitch,
+        link = TCLink,
+        autoSetMacs = True,
+        autoStaticArp = True
+    )
+
+    net.start()
+    pc1, pc2, pc3, pc4, pc5, pc6 = net.get('pc1', 'pc2', 'pc3', 'pc4', 'pc5', 'pc6')
+    print('*** The network is running.')
+
+    for s in net.switches:
+        print(f'Setting configuration for {s}')
+        os.system(f'ovs-vsctl set bridge {s} protocols=OpenFlow13')
+        os.system(f'ovs-vsctl set-controller {s} tcp:127.0.0.1:6633')
+
+    print('*** The network is setting STP')
+    time.sleep(30)
+	
+    print('*** The network is ready for tests')
+    print('*** Testing connectivity')
+    net.pingAll()
+	
+    # servers, & makes it run in background
+    pc3.cmd('iperf -s &')
+    time.sleep(1)
+	
+    print('*** Normal traffic')
+	# clients, popen runs the commends pararelly
+    p1 = pc1.popen(f'iperf -c {pc3.IP()} -t 120 -i 10')
+    time.sleep(random.uniform(0, 15))
+    p2 = pc2.popen(f'iperf -c {pc3.IP()} -t 90 -i 30')
+    time.sleep(random.uniform(0, 5))
+    p4 = pc4.popen(f'iperf -c {pc3.IP()} -t 110 -i 25')
+    time.sleep(random.uniform(0,20))
+    p5 = pc5.popen(f'iperf -c {pc3.IP()} -t 60 -i 5')
+	# waiting for the pararell processes so they can start togetheer
+    p1.wait()
+    p2.wait()
+    p4.wait()
+    p5.wait()
+	
+    print('*** Attack incoming')
+	# SYN flood attack
+    p6 = pc6.popen(f'hping3 -S --flood -p 80 {pc3.IP()}')
+    time.sleep(60)
+    p6.terminate()
+    print('The attack is over!')
+
+    CLI(net)
+    net.stop()
+            
+# running the code
+if __name__ == '__main__': 
+	setLogLevel('info') 
+	run()
 		
