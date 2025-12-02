@@ -35,7 +35,7 @@ class NetworkTopo(Topo):
 		
 		for s in spines:
 			for l in leaves:
-				self.addLink(spines[s], leaves[l])
+				self.addLink(spines[s], leaves[l], cls=TCLink, bw=10)
 				
 		# host-leaf connections 
 		self.addLink(hosts['h1'], leaves['l1']) 
@@ -88,13 +88,13 @@ def run():
 	
     print('*** Normal traffic')
 	# clients, popen runs the commends pararelly
-    p1 = pc1.popen(f'iperf -c {pc3.IP()} -t 120 -i 10')
+    p1 = pc1.popen(f'iperf -c {pc3.IP()} -t 120 -i 5 > pc1_log_normal.txt', shell=True)
     time.sleep(random.uniform(0, 15))
-    p2 = pc2.popen(f'iperf -c {pc3.IP()} -t 90 -i 30')
+    p2 = pc2.popen(f'iperf -c {pc3.IP()} -t 90 -i 5  > pc2_log_normal.txt', shell=True)
     time.sleep(random.uniform(0, 5))
-    p4 = pc4.popen(f'iperf -c {pc3.IP()} -t 110 -i 25')
+    p4 = pc4.popen(f'iperf -c {pc3.IP()} -t 110 -i 5  > pc4_log_normal.txt', shell=True)
     time.sleep(random.uniform(0,20))
-    p5 = pc5.popen(f'iperf -c {pc3.IP()} -t 60 -i 5')
+    p5 = pc5.popen(f'iperf -c {pc3.IP()} -t 60 -i 5  > pc5_log_normal.txt', shell=True)
 	# waiting for the pararell processes so they can start togetheer
     p1.wait()
     p2.wait()
@@ -102,10 +102,16 @@ def run():
     p5.wait()
 	
     print('*** Attack incoming')
+    p1 = pc1.popen(f'iperf -c {pc3.IP()} -t 120 -i 5 > pc1_log_attack.txt', shell=True)
+    time.sleep(random.uniform(0, 15))
 	# SYN flood attack
-    p6 = pc6.popen(f'hping3 -S --flood -p 80 {pc3.IP()}')
+    p6 = pc6.popen(f'hping3 -S --flood -p 5001 {pc3.IP()}', shell=True) 
+    #p6 = pc6.popen(f'hping3 -S --flood -p 5001 {pc3.IP()}', shell=True) # we wanna use the same port as iperf
     time.sleep(60)
     p6.terminate()
+    p6.wait()
+    p1.wait()
+    
     print('The attack is over!')
 
     CLI(net)
