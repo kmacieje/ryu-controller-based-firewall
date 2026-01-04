@@ -24,3 +24,8 @@ The simulation runs in **Mininet** using a **Leaf-Spine** architecture:
 * Mininet 2.3.1b4
 * Ryu Controllerr 4.34
 * Snort
+
+## 📚 References
+1. Analysis and Review of TCP SYN Flood Attack on Network with Its Detection and Performance Metrics - Hrishikesh Shriram Salunkhe, Prof. Sanjay Jadhav, Prof. Vijay Bhosale. International Journal of Engineering Research & Technology (IJERT). 2017
+2. SDN-Based Intrusion Detection System for Early Detection and Mitigation of DDoS Attacks - Pedro Manso, José Moura, Carlos Serrão. 2019
+3. https://ianpeter.medium.com/denial-of-service-dos-attack-and-detection-using-snort-90ae68667822
