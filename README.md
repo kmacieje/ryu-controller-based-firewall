@@ -1,6 +1,6 @@
 # SDN Reactive Firewall: DoS Detection & Mitigation (Ryu + Snort IDS)
 
-This project implements a reactive firewall mechanism within a SDN environment. It integrates the **Ryu Controller** with **Snort IDS** to automatically detect DoS attacks and block malicious traffic at the switch level in real-time.
+This project implements a reactive firewall mechanism within a SDN environment. It integrates the **Ryu Controller** with **Snort IDS** to automatically detect DoS attacks (specifically TCP SYN Flood) and block malicious traffic at the switch level in real-time.
 
 ## 🔄 Workflow
 
