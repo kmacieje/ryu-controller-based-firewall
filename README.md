@@ -16,9 +16,8 @@ The simulation runs in **Mininet** using a **Leaf-Spine** architecture:
   <img src="spine_leaf_topo_white.png" width="600">
 </p>
 
-## ⚙️ Usage
+## ⚙️ Tools
 
-### Prerequisites
 * Linux Ubuntu 22.04
 * Python 3.10.12
 * Mininet 2.3.1b4
