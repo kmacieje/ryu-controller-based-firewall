@@ -6,7 +6,7 @@ This project implements a reactive firewall mechanism within a SDN environment. 
 
 The system operates in a closed loop:
 1.  Network traffic is mirrored to Snort.
-2.  Snort analyzes packets against IDS rules.
+2.  Snort analyzes packets against IDS rules defined by the authors. 
 3.  Upon detecting an attack, Snort alerts the Ryu controller, which dynamically pushes OpenFlow rules to drop the malicious traffic at the source.
 
 ## 🌐 Network Topology
