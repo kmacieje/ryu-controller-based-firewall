@@ -13,7 +13,7 @@ The system operates in a closed loop:
 
 The simulation runs in **Mininet** using a **Leaf-Spine** architecture:
 <p align="center">
-  <img src="spine_leaf_topo_white.png" width="600">
+  <img src="sl_topo.png" width="600">
 </p>
 
 ## ⚙️ Tools
