@@ -34,8 +34,13 @@ The simulation runs in **Mininet** using a **Leaf-Spine** architecture:
 * iperf
 
 ## 🚀 Environment Setup
+#### 1. Configure Snort rule
+Predefine a Snort rule that will trigger on network events and add it to the file `/etc/snort/rules/local.rules`:
+```bash
+alert tcp any any -> 192.168.10.0/24 5001 (msg:"ryu block"; flags:S; detection_filter:track by_src, count 10, seconds 1; sid:1000001;)
+```
 #### 1. Start the Ryu controller (only with Python 3.9)
-First, launch the controller to listen for incoming switch connections, initialize the control plane, configure STP via the Ryu framework, and open the socket for receiving Snort alerts.
+Then, launch the controller to listen for incoming switch connections, initialize the control plane, configure STP via the Ryu framework, and open the socket for receiving Snort alerts.
 ```bash
 ryu run ryu_firewall.py
 ```
