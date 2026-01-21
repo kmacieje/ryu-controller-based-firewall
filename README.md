@@ -26,7 +26,7 @@ The simulation runs in **Mininet** using a **Leaf-Spine** architecture:
 ## ⚙️ Tools
 
 * Linux Ubuntu 22.04
-* Python 3.10.12
+* Python 3.9.19
 * Mininet 2.3.1b4
 * Ryu Controllerr 4.34
 * Snort 2.9.15.1
